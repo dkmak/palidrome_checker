@@ -1,9 +1,10 @@
-package com.example.toastapplication
+package com.example.ispalindrome
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,44 +18,59 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.toastapplication.ui.theme.ToastApplicationTheme
+import com.example.ispalindrome.ui.theme.IsPalindromeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var input: String by remember { mutableStateOf("") }
+            var isPalindrome: Boolean? by remember { mutableStateOf(null) }
 
-            var input: String by remember{mutableStateOf("")}
-            var isPalindrome : Boolean by remember {mutableStateOf(false)}
-            ToastApplicationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column {
+            IsPalindromeTheme {
+                Scaffold { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Greeting(
-                            name = "Android",
+                            name = "",
                             modifier = Modifier.padding(innerPadding)
                         )
 
                         TextField(
                             value = input,
-                            onValueChange = { input  = it },
+                            onValueChange = {
+                                input = it
+                                isPalindrome = null
+                            },
                             modifier = Modifier,
-                            label = { Text("Label") }
+                            label = { Text("Input") }
                         )
+
                         Button(
                             modifier = Modifier,
                             onClick = {
-                                isPalindrome =  (checkPalindrome(input))
+
+                                isPalindrome = (checkPalindrome(input))
                             },
-                            content = {Text("Click")}
+                            content = { Text("Click") }
                         )
 
-                        if (isPalindrome){
-                            Text("$input is a palindrome")
-                        } else {
-                            Text( "$input is not a palindrome")
+                        isPalindrome?.let{ isPalindrome ->
+                            if (isPalindrome) {
+                                Text("$input is a palindrome")
+                            } else {
+                                Text("$input is not a palindrome")
+                            }
                         }
                     }
 
@@ -67,7 +83,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "Hello! Is it a Palindrome?",
         modifier = modifier
     )
 }
@@ -75,20 +91,23 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    ToastApplicationTheme {
+    IsPalindromeTheme {
         Greeting("Android")
     }
 }
 
-/*
-* even
-* odd
-* empty string
-* */
-private fun checkPalindrome(input: String): Boolean {
-    return if (input.length % 2 == 0){
-        input.substring(0, input.length/2) == input.substring(input.length/2).reversed()
+fun checkPalindrome(s: String): Boolean {
+    val stripInput = s.trim().filter { c -> c.isLetterOrDigit() }.lowercase()
+    return if (stripInput.isEmpty()) {
+        return true
+    } else if (stripInput.length % 2 == 0) {
+        stripInput.substring(0, stripInput.length / 2) == stripInput.substring(stripInput.length / 2).reversed()
     } else {
-        input.substring(0, input.length/2) == input.substring((input.length/2)+1).reversed()
+        stripInput.substring(0, stripInput.length / 2) == stripInput.substring((stripInput.length / 2) + 1).reversed()
     }
+}
+
+private fun checkPalindrome2(s: String): Boolean {
+    val filteredS = s.filter { c -> c.isLetterOrDigit() }.lowercase()
+    return filteredS == filteredS.reversed()
 }

@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ToastApplication"
+rootProject.name = "IsPalindrome"
 include(":app")

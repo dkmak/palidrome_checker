@@ -1,4 +1,4 @@
-package com.example.toastapplication.ui.theme
+package com.example.ispalindrome.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.toastapplication"
+    namespace = "com.example.ispalindrome"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.toastapplication"
+        applicationId = "com.example.ispalindrome"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
