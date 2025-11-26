@@ -107,6 +107,7 @@ fun checkPalindrome(s: String): Boolean {
     }
 }
 
+// https://leetcode.com/problems/valid-palindrome/description/
 private fun checkPalindrome2(s: String): Boolean {
     val filteredS = s.filter { c -> c.isLetterOrDigit() }.lowercase()
     return filteredS == filteredS.reversed()
