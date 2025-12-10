@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.ispalindrome.ui.theme.IsPalindromeTheme
 
@@ -29,86 +27,109 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var input: String by remember { mutableStateOf("") }
-            var isPalindrome: Boolean? by remember { mutableStateOf(null) }
+            IsPalindromeApp()
+        }
+    }
+}
 
-            IsPalindromeTheme {
-                Scaffold { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Greeting(
-                            name = "",
-                            modifier = Modifier.padding(innerPadding)
-                        )
+/*
+* Stateful Composable - IsPalindromeApp is the owner of the state
+* */
+@Composable
+fun IsPalindromeApp() {
+    var input: String by remember { mutableStateOf("") }
+    var isPalindrome: Boolean? by remember { mutableStateOf(null) }
 
-                        TextField(
-                            value = input,
-                            onValueChange = {
-                                input = it
-                                isPalindrome = null
-                            },
-                            modifier = Modifier,
-                            label = { Text("Input") }
-                        )
+    IsPalindromeTheme {
+        Scaffold { innerPadding ->
+            IsPalindromeScreen(
+                modifier = Modifier.padding(innerPadding),
+                inputValue = input,
+                onInputValueChanged = {
+                    input = it
+                    isPalindrome = null
+                },
+                isPalindromeResult = isPalindrome,
+                onCheckPalindromeClicked = { isPalindrome = (checkPalindrome(input)) }
+            )
+        }
+    }
+}
 
-                        Button(
-                            modifier = Modifier,
-                            onClick = {
+@Preview
+@Composable
+fun IsPalindromeAppPreview() {
+    IsPalindromeApp()
+}
 
-                                isPalindrome = (checkPalindrome(input))
-                            },
-                            content = { Text("Click") }
-                        )
+/*
+* IsPalindromeScreen is stateless (no remember here).
+* You can use this anywhere in your app, not just this Activity
+* Makes it easy to test.
+* */
+@Composable
+fun IsPalindromeScreen(
+    modifier: Modifier,
+    inputValue: String,
+    onInputValueChanged: (String) -> Unit, // a lambda that takes a String and returns nothing
+    isPalindromeResult: Boolean?,
+    onCheckPalindromeClicked: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Hello! Is it a Palindrome?"
+        )
+        TextField(
+            modifier = Modifier,
+            value = inputValue,
+            onValueChange = onInputValueChanged,
+            label = { Text("Input") }
+        )
+        Button(
+            modifier = Modifier,
+            onClick = onCheckPalindromeClicked,
+            content = { Text("Click & Check") }
+        )
 
-                        isPalindrome?.let{ isPalindrome ->
-                            if (isPalindrome) {
-                                Text("$input is a palindrome")
-                            } else {
-                                Text("$input is not a palindrome")
-                            }
-                        }
-                    }
-
-                }
+        isPalindromeResult?.let { isPalindrome ->
+            if (isPalindrome) {
+                Text("$inputValue is a palindrome")
+            } else {
+                Text("$inputValue is not a palindrome")
             }
         }
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello! Is it a Palindrome?",
-        modifier = modifier
-    )
+fun IsPalindromeContentPreview() {
+    IsPalindromeTheme {
+        IsPalindromeScreen(
+            modifier = Modifier,
+            inputValue = "testInput",
+            onInputValueChanged = {},
+            onCheckPalindromeClicked = {},
+            isPalindromeResult = null,
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun IsPalindromeContentTruePreview() {
     IsPalindromeTheme {
-        Greeting("Android")
+        IsPalindromeScreen(
+            modifier = Modifier,
+            inputValue = "testInput",
+            onInputValueChanged = {},
+            onCheckPalindromeClicked = {},
+            isPalindromeResult = true,
+        )
     }
-}
-
-fun checkPalindrome(s: String): Boolean {
-    val stripInput = s.trim().filter { c -> c.isLetterOrDigit() }.lowercase()
-    return if (stripInput.isEmpty()) {
-        return true
-    } else if (stripInput.length % 2 == 0) {
-        stripInput.substring(0, stripInput.length / 2) == stripInput.substring(stripInput.length / 2).reversed()
-    } else {
-        stripInput.substring(0, stripInput.length / 2) == stripInput.substring((stripInput.length / 2) + 1).reversed()
-    }
-}
-
-// https://leetcode.com/problems/valid-palindrome/description/
-private fun checkPalindrome2(s: String): Boolean {
-    val filteredS = s.filter { c -> c.isLetterOrDigit() }.lowercase()
-    return filteredS == filteredS.reversed()
 }
