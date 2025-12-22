@@ -13,9 +13,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +39,13 @@ class MainActivity : ComponentActivity() {
 * */
 @Composable
 fun IsPalindromeApp() {
-    var input: String by remember { mutableStateOf("") }
+    // input is something you might consider saving along with configuration changes
+    var input: String by rememberSaveable { mutableStateOf("") }
+
+    /*
+    * remember - store an object in memory across recompositions
+    * mutableStateOf - state holder that triggers recompositions when it changes
+    * */
     var isPalindrome: Boolean? by remember { mutableStateOf(null) }
 
     IsPalindromeTheme {
